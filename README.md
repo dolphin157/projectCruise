@@ -28,29 +28,17 @@
 
 
 # 🔧개발환경
-Brief project description.
 
 ## Table of Contents
 
-- [Development Environment](#development-environment)
-  - [Frontend](#frontend)
-  - [Backend](#backend)
-  - [Database](#database)
-  - [Testing](#testing)
-  - [Docker](#docker)
+- OS : Windows11, Mac
+- Frontend : Html5, Css3, Javascript, Jquery, Ajax
+- Backend : Java(jdk-11), SpringBoot 2.7.15
+- DB : Oracle-xe-11g, MyBatis
+- Tools : IntelliJ, Git, Docker
+  
 
-## Development Environment
 
-### Frontend
-
-#### Prerequisites
-
-- [Windows 11](https://www.microsoft.com/en-us/windows/windows-11)
-- [Visual Studio Code](https://code.visualstudio.com/) or any preferred code editor
-- [HTML5](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
-- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
-- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-- [jQuery](https://jquery.com/)
 
 
 <br><br>
