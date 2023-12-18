@@ -1,4 +1,5 @@
-![title (3)](https://github.com/eunzzzzz1/projectCruise/assets/139827141/97b8b2be-7608-44b7-b417-923cd6b0a765)
+
+![cruise](https://github.com/dolphin157/projectCruise/assets/102042928/ea7f0410-4ec9-489b-b534-c85c848ce1a1)
 
 
 <br><br>
