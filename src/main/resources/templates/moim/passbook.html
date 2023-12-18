@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>크루즈 :: 항해 시작</title>
+
+<script src="https://kit.fontawesome.com/f350c9c720.js" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script id="javascript-sdk" src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script th:src="@{/js/kakaoLink/kakaoLink2.js}"></script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+        var openAccPwd = /*[[${openAccPwd}]]*/; //가상계좌 비밀번호
+        var myaccountList = /*[[${myaccountList}]]*/; //등록된 계좌정보
+    /*]]*/
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/moim/passbook.css" />
+<link rel="stylesheet" type="text/css" href="/css/moim/passbook_account_modal.css" />
+<link rel="stylesheet" href="/css/mypage/addAccount_banks.css"/>
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+</head>
+
+<body class="back">
+
+<th:block th:replace="nav_footer/nav_footer :: header"></th:block>
+
+	<main>
+		<form action="" method="post" name="myForm">
+			<div class="container">
+
+				<div class="form">
+					<div>
+						<h3>크루즈의 선장이 되어보세요!</h3>
+					</div>
+
+					<div class="form-subject">
+						<label for="account">모임통장 계좌</label>
+						<p style="font-size: 13px; color: gray;">*대출이용계좌, 비활성화계좌는
+							모임통장으로 사용하실수 없습니다.</p>
+					</div>
+					<div class="form-content">
+						<div th:if="${account != 0}">
+							<label>
+								<input type="checkbox" name="account_choice"
+								onclick="myAccount(this);" />전환 가능 계좌 선택
+							</label><br>
+
+							<select id="my_account" name="my_account" disabled>
+								<option th:each="account : ${myAccount}" th:value="${account.myaccount_bank + ' ' + account.myaccount_anum}">
+									<span th:text="${account.myaccount_bank + ' ' + account.myaccount_anum}"></span>
+								</option>
+							</select><br>
+						</div>
+
+						<div th:if="${account == 0}">
+							<label> <input type="checkbox" name="account_choice"
+										   onclick="myAccount(this);"  disabled/>전환 가능 계좌 선택
+							</label>
+							<div style="margin-top:5px;">
+								<select  disabled>
+									<option value="전환 가능한 계좌가 없습니다.">전환 가능한 계좌가 없습니다.</option>
+								</select>
+							</div>
+						</div>
+						<br>
+
+						<label>
+							<input type="checkbox" name="account_choice" onclick="newAccount(this);" />
+						</label>
+
+						<span>새로운 계좌 선택</span>
+						<button type="button" id="new_account_button" class="add-accountBtn" disabled>등록</button>
+						<p id="myNewAcc" style="font-size: 13px; color: blue;"></p>
+
+
+					</div>
+
+					<div class="form-subject" style="margin-top:15px;">
+						<label for="crewName">모임통장 이름</label>
+					</div>
+					<div class="form-content">
+						<input class="input" id="crewName" name="crew_name" type="text"
+							placeholder="모임통장 이름을 지어주세요" />
+					</div>
+					<div class="form-subject">
+						<label for="crewInfo">모임소개[선택]</label>
+					</div>
+					<div class="form-content">
+						<input class="input" id="crewInfo" name="crew_info" type="text"
+							   placeholder="모임을 간략히 소개해 주세요" />
+					</div>
+					<div class="form-subject">
+						<label for="crewGoal">목표금액[선택]</label>
+					</div>
+					<div class="form-content">
+						<input class="input" id="crewGoal" name="crew_goal" type="number"
+							placeholder="숫자만 입력해주세요" /> 원
+					</div>
+
+					<div class="form-subject">
+						<label for="crewPaymoney">회비금액</label>
+					</div>
+					<div class="form-content">
+						<input class="input" id="crewPaymoney" name="crew_paymoney"
+							type="number" placeholder="숫자만 입력해주세요" /> 원
+					</div>
+
+					<div class="form-subject">
+						<label for="crewPaydate">납입일</label>
+					</div>
+					<div class="form-content">
+						<input class="input" id="crewPaydate" name="crew_paydate"
+							type="number" placeholder="" /> 일
+					</div>
+
+					<div class="form-subject">
+						<label for="consent">약관동의</label>
+					</div>
+					<div class="form-content">
+						<input id="consent" name="consent" type="checkbox" />본인은 아래 약관을
+						확인하였고 약관에 동의합니다.
+					</div>
+					<div class="form-group">
+						<div class="textbox">
+							<div class="article">
+								<p class="article_text">
+								<h3>제 1 조 목적</h3>
+								이 약관은 주식회사 크루즈(이하 “크루즈”라 합니다가 제공하는것을 목적으로 합니다.
+
+								<h3>제 2 조 서비스의 종류</h3>
+								크루즈는 고객과의 모임통장서비스 이용계약 성립 시 다음 각 호에 해당하는 서비스를 제공하며, 필요에 따라 각각의
+								서비스를 추가, 변경 및 제한할 수 있으며 그 방법은 이 약관 제 12 조에서 정한 바에 따릅니다. 1. 모임주의
+								모임 만들기를 위한 모임 개설, 모임멤버 초대 서비스 2. 모임주의 모임장부 생성 및 모임멤버의 모임장부 조회서비스
+								3. 모임주의 모임 관리를 위한 회비관리 및 통지 서비스 4. 기타 크루즈가 제공하는 부가 서비스
+								<h3>제 3 조 서비스 이용 시 제한사항</h3>
+								① 모임통장서비스가 신청된 모임통장 대상계좌에 대하여는 다음 각 호의 서비스 이용이 제한됩니다. 1. 마이너스통장
+								대출, 비상금 대출 등 한도 대출 이용 2. 대출 원리금 납부 계좌로 이용
+								<h3>제 4 조 면책조항</h3>
+								① 모임주는 모임통장 대상계좌 관련 정보를 모임멤버에게 제공하기 위해 크루즈의 모바일앱 등을 이용할 수 있습니다.
+								이 경우 모임주가 직접 자신의 책임 하에 정보를 모임멤버에게 게시·전달하는것으로 보며, 카카오뱅크는 모임주의 정보
+								전달과 관련하여 그 내역 등을 기록, 관리, 통보할 의무 등을 부 담하지 않습니다. ② 크루즈는 모임주가 입력 또는
+								게시, 전달한 정보의 정확성 및 유효성을 확인할 책임이 없으며, 모임주가 입력 또는 게시·전달한 정보·사실의
+								신뢰도, 내용의 정확성 등에 관하여 보증하거나 책임을 지지 않습니다. ③ 크루즈는 모임주 및 모임멤버간 또는 그와
+								제 3 자 상호 간에 서비스를 매개로 발생한 거래, 분쟁에 대해서는 개입할 의무가 없으며 크루즈의 고의 또는 과실이
+								없는 한 책임의 전부 또는 일부를 지지 않습니다.
+								<h3>제 5 조 약관의 변경</h3>
+								크루즈가 이 약관을 변경하고자 하는 경우에는 「전자금융거래 기본약관」의 약관의 변경조항을 준용합니다.
+								<h3>제 6 조 관할법원</h3>
+								모임통장서비스에 관한 분쟁이 발생한 경우에는 크루즈와 고객이 합의로 해결함을 원칙으로 합니다. 다만, 당사자 간에
+								합의할 수 없거나 합의가 이루 어지지 않는 경우 관할법원은 민사소송법에서 정하는 바에 따릅니다.
+							</div>
+						</div>
+					</div>
+
+					<div class="container" id="container">
+						<button type="button" id="btn-modal" class="start_button"
+							onClick="sendIt()">전환신청</button>
+					</div>
+
+					<div id="modal" class="modal-overlay">
+						<div class="modal-window">
+							<div class="title">
+								<div class="close-area">X</div>
+							</div>
+
+							<div class="contents">
+								<div>
+									<h3>모임통장 신청완료</h3>
+									<p>이제 모임통장에 친구를 초대해보세요</p>
+									<table>
+										<tr>
+											<td colspan="2" style="border-bottom: 3px solid #BDBDBD;"></td>
+										</tr>
+										<tr>
+											<td>모임 통장 이름</td>
+											<td id="crewNameTd">겸둥이들 먹방 회비</td>
+										</tr>
+										<tr>
+											<td>계좌번호</td>
+											<td id="accountTd">110-234-56789</td>
+										</tr>
+										<tr>
+											<td>모임통장 개설일</td>
+											<td id="createdTd">2023.09.20 15:47:54</td>
+										</tr>
+										<tr>
+											<td colspan="2" style="border-top: 3px solid #BDBDBD;"><p style="font-size: 13px;">* 모임통장 신청일 이후 내역부터 멤버들에게 보여집니다.</p></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+
+							<div class="container">
+								<button type="button" class="btn" onClick="javascript:sendLink()">친구 초대하기</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</form>
+	</main>
+
+	<!-- 계좌 등록 모달 -->
+	<!-- 약관동의 -->
+	<div class="modal-div1">
+		<div class="content">
+			<span class="closeBtn1">&times;</span>
+			<div class="modal-cover">
+				<h2>약관동의</h2>
+				<div class="modal-chk-box">
+					<div class="agree-all-box">
+						<input type="checkbox" id="agree-all"/><label for="agree-all"></label>
+						<span class="agree-text">전체동의</span>
+					</div>
+					<hr/>
+					<div class="agree-select-box">
+						<input type="checkbox" id="agree-chk1" name="agreeChk"/><label for="agree-chk1"></label>
+						<button class="agree-text" id="agree-show">개인정보 수집 및 이용 동의 (필수) &gt; </button><br/>
+
+						<!-- hide -->
+						<div class="agree-hide-box" id="agree-hide">
+						<textarea readonly disabled>&#10;&#10;제 1조 총칙&#10;&#10;크루즈(주) (서울특별시 강남구 테헤란로 124, 4층)는 (이하 ’회사’는) 개인정보보호를 매우 중요시하며, 개인정보보호법 등 관계법령의 규정을 준수하여 개인정보를 최선을 다하여 보호함은 물론 개인정보보호법에 의거한 개인정보 처리방침을 통하여 고객(정보주체)의 개인정보보호 및 권익을 보호하고 이와 관련한 고충을 원활하게 처리할 수 있도록 합니다.&#10;&#10;제 2조 개인정보의 수집 및 이용목적&#10;&#10;회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 개인정보 보호법 등에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.&#10;&#10;1. 회사에서 제공하는 회원제 서비스의 본인 확인 및 이용을 위해 활용&#10;회사에서 제공하는 회원제 서비스의 가입 및 이용을 위한 활용 정보주체의 개인정보 열람, 정정, 삭제, 처리정지 요구 시 본인확인 및 개인식별회원제 서비스의 본인 확인, 서비스에 대한 만족도 조사회원제 서비스의 본인 확인, 서비스에 대한 만족도 조사&#10;&#10;2. 회원관리 및 본인확인&#10;본인 확인, 가입의사 확인, 회원자격 유지/관리, 서비스 부정이용 방지 웹사이트 ID 관리, 회원에 대한 고지사항 전달 민원 처리를 위한 민원인의 신원 확인, 민원사항 확인 및 처리, 기타 연락 및 통지&#10;&#10;3. 마케팅 및 광고에 활용&#10;신규 서비스 (제품 포함) 및 이벤트 정보 안내, DM, SMS, 우편, 고객별 통계분석자료 활용, 시장조사&#10;&#10;4. 서비스 개선&#10;접속빈도 파악 및 서비스 이용에 대한 통계처리 등
+						</textarea>
+						</div>
+
+						<input type="checkbox" id="agree-chk2" name="agreeChk"/><label for="agree-chk2"></label>
+						<button class="agree-text" id="agree-show2">개인정보 제3자 제공 동의 (필수) &gt;</button><br/>
+
+						<!-- hide -->
+						<div class="agree-hide-box" id="agree-hide2">
+						<textarea readonly disabled>&#10;&#10;제 1조 개인정보의 제3자 제공&#10;&#10;회사는 개인정보를 "1. 개인정보의 처리목적 및 수집항목"에서 고지한 범위내에서 사용하며, 정보주체의 사전 동의 없이는 동 범위를 초과하여 이용하거나 원칙적으로 개인정보를 외부에 공개하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.&#10;&#10;- 정보주체가 사전에 동의한 경우&#10;- 법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우&#10;간혹 입사 지원자에게 회사와 특수관계에 있는 회사(자회사, 계열사 등)에 입사제안을 드릴 수 있으며, 이 경우 반드시 사전에 입사 지원자에게 개별 연락하여 동의 절차를 거친 후 입사 지원서를 해당 회사로 이관합니다.
+						</textarea>
+						</div>
+
+						<input type="checkbox" id="agree-chk3" name="agreeChk"/><label for="agree-chk3"></label>
+						<button class="agree-text" id="agree-show3">오픈뱅킹 참여은행 출금이체 동의 (필수) &gt;</button><br/>
+
+						<!-- hide -->
+						<div class="agree-hide-box" id="agree-hide3">
+						<textarea readonly disabled>&#10;&#10;제1조 약관의 적용&#10;&#10;오픈뱅킹공동업무를 기반으로 이용기관이 개발한 핀테크 서비스를 통해 본인명의 계좌의 금융정보를 확인하고자 하는 개인(이하 “사용자”라 한다)과 크루즈(주)(이하 “회사”라 한다)에 대하여 이 약관을 적용합니다.&#10;&#10;제2조 용어의 정의&#10;&#10;1. “오픈뱅킹공동업무”란 이용기관이 핀테크 서비스를 용이하게 개발하고, 제공할 수 있도록 금융권에서 공동으로 구축하여 운영하는 표준화된 오픈 API 플랫폼에 대한 제반 업무를 말합니다.&#10;2. “이용기관”이란 금융결제원과 오픈뱅킹공동업무 이용계약을 체결하고 이용승인을 받은 기업 을 말합니다. 여기에는 회사를 제외한 금융기관도 포함됩니다.&#10;3. “금융정보조회”란 사용자가 핀테크 서비스를 통해 제5조에 명시하는 본인명의 계좌의 금융정보조회 요청시 회사가 금융정보를 제공하는 업무를 말합니다.&#10;4. “오픈뱅킹중계센터”란 오픈뱅킹공동업무 관련 시스템을 구축하고 운영하며, 회사와 이용기관을 서로 중계하는 곳으로 융결제원이 운영합니다.
+						</textarea>
+						</div>
+
+					</div>
+				</div>
+				<div>
+					<button class="nextBtn1">확인</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 모달2 -->
+	<div class="modal-div2">
+		<div class="content">
+			<span class="closeBtn2">&times;</span>
+			<div class="modal-cover">
+				<h2>계좌 선택</h2>
+				<div class="bank-box1">
+					<div>
+						<div class="bankBtn" id="kakao">카카오뱅크</div>
+						<div class="bankText">카카오뱅크</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="kb">KB 국민은행</div>
+						<div class="bankText">국민은행</div>
+					</div>
+					<div>
+						<div class="bankBtn"  id="nh">NH 농협</div>
+						<div class="bankText">농협</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="sinhan">신한은행</div>
+						<div class="bankText">신한은행</div>
+					</div>
+				</div>
+				<div class="bank-box2">
+					<div>
+						<div class="bankBtn" id="toss">토스뱅크</div>
+						<div class="bankText">토스뱅크</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="hana">하나은행</div>
+						<div class="bankText">하나은행</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="ibk">IBK 기업은행</div>
+						<div class="bankText">기업은행</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="kbank">케이뱅크</div>
+						<div class="bankText">케이뱅크</div>
+					</div>
+				</div>
+				<div class="bank-box3">
+					<div>
+						<div class="bankBtn" id="woori">우리은행</div>
+						<div class="bankText">우리은행</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="city">씨티뱅크</div>
+						<div class="bankText">씨티뱅크</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="gwangju">광주은행</div>
+						<div class="bankText">광주은행</div>
+					</div>
+					<div>
+						<div class="bankBtn" id="kfcc">MG 새마을금고</div>
+						<div class="bankText">새마을금고</div>
+					</div>
+				</div>
+
+				<div>
+					<div class="nextBtn2" >확인</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 모달3 -->
+	<!-- form 태그로 전체 insert, 모달1,2의 정보는 hidden으로 넘기기
+    모달1은 db에 저장되지 않고 생색만 내기 -->
+	<form action="/moim/passbook/new" method="post" name="accForm">
+		<div class="modal-div3">
+			<div class="content">
+				<span class="closeBtn3">&times;</span>
+				<div class="modal-cover">
+					<!-- 모달 내용 -->
+					<h2>계좌 등록</h2>
+					<div class="accountName-box">
+						<div class="account-text">이름</div>
+						<input type="text" class="account-input" th:value="${userName}" disabled/>
+					</div>
+					<div class="accountNum-box">
+						<div class="account-text">계좌번호</div>
+						<input type="text" id="account-input1" class="account-input" name="crew_accountid"
+							   placeholder="계좌번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+								value=""/>
+						<div class="resultDiv" id="resultNum"></div>
+					</div>
+					<div class="accountPwd-box">
+						<div class="account-text">계좌 비밀번호</div>
+						<input type="password" class="accountPwd-input" placeholder="계좌 비밀번호 4자리를 입력해주세요."
+							   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+							   value=""/>
+						<button type="button" class="account-authBtn">인증</button>
+						<div class="resultDiv" id="resultPwd"></div>
+					</div>
+					<div>
+						<button type="button" class="addBtn" onclick="insertNewAccount();">등록</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+
+<p id="sessionGroup" style="display:none;"></p>
+<p id="sessionNum" style="display:none;"></p>
+
+<th:block th:replace="nav_footer/nav_footer :: footer"></th:block>
+<th:block th:replace="nav_footer/nav_footer :: head"></th:block>
+
+<script th:inline="javascript" th:src="@{/js/mypage/mypage_account.js}"></script>
+<script type="text/javascript" src="/js/moim/passbook.js"></script>
+
+
+
+</body>
+</html>

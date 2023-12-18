@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>크루즈 :: 편리한 모임 관리 서비스</title>
+    <!-- 네비게이터 바 CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/f350c9c720.js" crossorigin="anonymous"></script>
+    <!-- ----------------- -->
+    <link rel="stylesheet" href="/css/mypage/mypage_crew.css">
+    <link rel="stylesheet" href="/css/mypage/mypage_account.css">
+    <link rel="stylesheet" href="/css/mypage/mypage_account_modal.css">
+    <!-- 계좌 추가 모달의 은행부분 -->
+    <link rel="stylesheet" href="/css/mypage/addAccount_banks.css"/>
+
+    <!--초대 모달창 부분 -->
+    <link rel="stylesheet" href="/css/modal/modal2.css">
+    <!-- 일정 css -->
+    <link rel="stylesheet" href="/css/mypage/scroll.css">
+    <link rel="stylesheet" href="/css/mypage/selectbox.css"/>
+    <!-- 폰트 -->
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+    <!-- 구글아이콘 -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- swiper 링크 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
+    <style>
+    /* 아이콘 */
+    .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 380,'GRAD' 0,'opsz' 24;font-size:20px; }
+    .material-symbols-sharp { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size: 60px;color: white;-webkit-text-stroke: 1px rgb(58, 58, 58); }
+
+    </style>
+
+    <!-- 풀캘린더 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+    <script th:inline="javascript">
+        <!-- 풀캘린더 스크립트 -->
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            myCalendarLoad(/*[[${userInfo.email}]]*/);
+
+        });
+    /*]]>*/
+    </script>
+    <style>
+
+        #crewCalendar {
+            background-color: white;
+            border-radius: 10px;
+            margin: 20px;
+            padding: 20px 0 0 0;
+            font-family: 'NanumSquare', Helvetica Neue, Helvetica, sans-serif;
+            font-size: 14px;
+            height: 510px;
+        }
+
+        #calendar {
+            width: 550px;
+            /* height: 490px; CSS에서 이렇게 설정하면 안되나봐... 스크립트 단에서 설정해줘야 하는듯 */
+            padding: 0;
+            margin: 0 auto;
+        }
+
+        .crewCalendarContainer {
+            position: relative;
+        }
+
+        .fc-daygrid-block-event .fc-event-title {
+            font-size: 10px;
+        }
+        .fc .fc-scroller-harness-liquid {
+            height: 500px;
+        }
+
+
+    </style>
+
+    
+</head>
+<body>
+
+<th:block th:replace="nav_footer/nav_footer :: header"></th:block>
+
+
+<!-- 모임 페이지 -->
+    <div class="container_1">
+        <div class="crew-titlebox">
+            <div class="crew-title">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/Triangular%20Flag.png" alt="Triangular Flag" width="60" height="60" />
+                
+                 내 크루 모아 보기
+            </div>
+            <div class="slidebox" th:if="${!#lists.isEmpty(crewLists)}">
+                <button class="slideBtn-prev">
+                    <span class="material-symbols-outlined">arrow_left_alt</span>
+                </button>
+                <button class="slideBtn-next">
+                    <span class="material-symbols-outlined">arrow_right_alt</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="zeroAccount-box" th:if="${#lists.isEmpty(crewLists)}" style="background-color:#0C0CCA96;">
+            <div class="zeroAccount-content">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Dotted%20Line%20Face.png" alt="Dotted Line Face" width="150" height="150" />
+                <span class="zeroAccount-text">등록된 크루가 없어요ㅠㅠ</span>
+            </div>
+        </div>
+
+        <form method="post" action="/mypage/mypage_all" name="goForm" >
+            <section class="sectionbox" th:if="${!#lists.isEmpty(crewLists)}">
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+
+                        <!-- 반복문으로 돌리기 -->
+
+                        <div class="swiper-slide" th:each="crewdto:${crewLists}">
+                            <div class="crew-box">
+                                <div class="crew-detail-box">
+                                    <p class="crew-name" th:text="${crewdto.crew_name}"></p>
+                                    <p class="crew-account" th:text="${crewdto.crew_accountid2}"></p>
+                                </div>
+                                <div class="crew-content" th:text="${crewdto.crew_info}"></div>
+                                <div class="crewBtn-box">
+                                    <button class="crewBtn" type="button" th:onclick="|location='http://192.168.16.27:8082/crew?crewNum=${crewdto.crew_num}'|">크루 보기</button>
+                                </div>
+
+                                <button th:id="${crewdto.crew_num}" class="user-out" type="button" th:onclick="showDelInfo([[${crewdto.crew_num}]])">탈퇴하기</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+
+
+        <!-- 크스롤 -->
+        <div class="crew-scroll-box">
+            <div class="crew">
+                <button class="crew-scrollBtn" onclick="goToScroll('account-scroll')"> 
+                    <span class="material-symbols-sharp">
+                        stat_minus_2
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 크루 탈퇴 안내 모달창 -->
+    <!-- 크루 탈퇴 예, 아니오 모달 -->
+
+
+    <div th:id="|crewDelmodal-div${crewdto.crew_num}|" class="crewDelmodal-div hidden" th:each="crewdto:${crewLists}">
+        <div class="crewDel-content">
+            <div class="crewDel-box" >
+                <h2 class="crewDel-title" th:text="|[${crewdto.crew_name}] 크루에서 정말 탈퇴하시겠습니까?|"></h2>
+                <div class="creDel-content"><b> [ 안내사항 ] </b> <br/>
+                    작성하신 게시글과 댓글은 삭제되지 않고 크루에 계속해서 보존됩니다.
+                    재가입을 하더라도 탈퇴 이전의 게시글과 댓글은 수정/삭제할 수 없으므로
+                    삭제를 원하는 게시물 또는 댓글이 있다면 탈퇴 전 반드시 삭제해주시기 바랍니다.
+                    또한, 탈퇴를 결정한 뒤에는 결정을 취소할 수 없으니 신중히 결정해주세요.
+                </div>
+                <div class="yn-box">
+                    <button th:id="|yBtn${crewdto.crew_num}|" class="yBtn" th:onclick="delCrew([[${crewdto.crew_num}]])">예</button>
+                    <button th:id="|nBtn${crewdto.crew_num}|" class="nBtn" th:onclick="closeNo([[${crewdto.crew_num}]])">아니오</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="y-div  hidden" th:id="|y-div${crewdto.crew_num}|" th:each="crewdto:${crewLists}">
+        <div class="y-content">
+            <div class="y-box">
+                탈퇴되었습니다.
+            </div>
+            <button class="yes" th:onclick="closeExit([[${crewdto.crew_num}]])">확인</button>
+        </div>
+    </div>
+
+    <div class="n-div hidden" th:id="|n-div${crewdto.crew_num}|" th:each="crewdto:${crewLists}">
+        <div class="n-content">
+            <div class="n-box">
+                계속 항해를 이어갑니다.
+            </div>
+            <button class="no" th:onclick="closeContinue([[${crewdto.crew_num}]])">확인</button>
+        </div>
+    </div>
+
+    <div class="e-div hidden" th:id="|e-div${crewdto.crew_num}|" th:each="crewdto:${crewLists}">
+        <div class="e-content">
+            <div class="e-box">
+                선장은 탈퇴불가합니다.
+            </div>
+            <button class="e-yes" th:onclick="closeNone([[${crewdto.crew_num}]])">확인</button>
+        </div>
+    </div>
+
+
+    <script th:inline="javascript">
+
+
+        function delCrew (crewNum){
+
+            console.log("크루번호>>" + crewNum);
+
+            $.ajax({
+                    type : "POST",
+                    url : "/mypage/mypage_all_ok",
+                    data : {
+                        crewNum : crewNum
+                    },
+                    success : function(result){
+                    console.log("성공결과>>" + result)
+
+
+                            if(result == "OK"){
+
+                                closeOk(crewNum) //탈퇴됨 창 열림
+
+                            }else if(result == "none"){
+                                closeDelNone(crewNum) //선장 창 열림
+                            }
+
+                    },
+                    error:function(xhr,status,error) {
+                        console.log("탈퇴에러..!" + error);
+                    }
+              });
+        }
+    </script>
+
+    <!-- 웨이브 배경 -->
+    <div class="wave"><div class="blue"></div></div>
+
+    <!-- 계좌 시작 -->
+    <div class="container_2">
+        <!-- scroll 닻 -->
+        <div class="account-scroll"></div>
+
+        <div class="add-account-box">
+            <div class="add-account-cover">
+                <p class="add-account-text">
+                    한 번 등록으로,<br/> 편리하게 사용해보세요
+                </p>
+                <div class="add-accountBtn-cover">
+                    <button class="add-accountBtn">
+                        계좌 등록
+                    </button>
+                </div>
+                <div class="add-account-img">
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Bear.png" alt="Bear" width="200" height="200"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-slide-box"> 
+            <div class="account-title">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/Triangular%20Flag.png" alt="Triangular Flag" width="60" height="60" />
+                
+                 내 계좌 모아 보기
+            </div>
+            <div class="slide-cover" th:if="${!#lists.isEmpty(accountLists)}">
+                <button class="slideBtn-prev">
+                    <span class="material-symbols-outlined">arrow_left_alt</span>
+                </button>
+                <button class="slideBtn-next">
+                    <span class="material-symbols-outlined">arrow_right_alt</span>
+                </button>
+            </div>
+        </div>
+
+        <section class="article-account-section">
+            <!-- 계좌 등록 0일 때 if로 화면 만들기 -->
+            <div class="zeroAccount-box" th:if="${#lists.isEmpty(accountLists)}">
+                <div class="zeroAccount-content">
+                    <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Dotted%20Line%20Face.png" alt="Dotted Line Face" width="150" height="150" />
+                    <span class="zeroAccount-text">등록된 계좌가 없어요ㅠㅠ</span>
+                </div>
+            </div>
+
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <!-- 반복문 -->
+                    <div class="swiper-slide" th:each="dto:${accountLists}">
+                        <div class="article-account-box">
+                            <div class="account-box">
+                                <div class="select-modal-div" th:onclick="showAccount([[${dto.myaccount_anum}]]);oneMonths([[${dto.myaccount_anum}]]);">
+                                    <!-- 계좌 이미지 if 국민,신한,우리,카카오,기업만 등록 가능 -->
+                                    <div class="account-name" th:if="${#strings.equals(dto.myaccount_bank,'카카오뱅크')}">
+                                        <img class="account-name-img-kakao" src="/images/mypage/kakaobank_logo.png"/>
+                                    </div>
+
+                                    <div class="account-name" th:if="${#strings.equals(dto.myaccount_bank,'신한은행')}">
+                                        <img class="account-name-img" src="/images/mypage/신한뱅크_로고_PNG_AI_원본_다운.png"/>
+                                    </div>
+
+                                    <div class="account-name" th:if="${#strings.equals(dto.myaccount_bank,'국민은행')}">
+                                        <img class="account-name-img" src="/images/mypage/국민은행_로고_PNG_AI_원본_다운.png"/>
+                                    </div>
+
+                                    <div class="account-name" th:if="${#strings.equals(dto.myaccount_bank,'우리은행')}">
+                                        <img class="account-name-img" src="/images/mypage/우리은행_로고_PNG_AI_원본_다운.png"/>
+                                    </div>
+
+                                    <div class="account-name" th:if="${#strings.equals(dto.myaccount_bank,'기업은행')}">
+                                        <img class="account-name-img" src="/images/mypage/기업은행_로고_PNG_AI_원본_다운1.png"/>
+                                    </div>
+
+                                    <div class="account-num-cover">
+                                        <p class="account-num-title">계좌번호</p>
+                                        <p class="account-num" th:text="${dto.myaccount_anum2}"></p>
+                                    </div>
+                                </div>
+                                <div class="account-alias-box">
+                                    <p class="account-alias" th:id="|account-alias${dto.myaccount_anum}|" th:text="${dto.myaccount_name}"></p>
+                                    <input type="text" th:id="|aname${dto.myaccount_anum}|" th:value="${dto.myaccount_name}" class="account-alias2 hidden"/>
+                                    <button class="account-update" th:id="|account-update${dto.myaccount_anum}|" th:onclick="updateBtn([[${dto.myaccount_anum}]])">수정</button>
+                                    <button class="account-update-ok hidden" th:id="|account-update-ok${dto.myaccount_anum}|" th:onclick="updateAname([[${dto.myaccount_anum}]]);clickChangeBtn();">변경</button>
+                                    |
+                                    <button class="account-delete">삭제</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <script>
+
+            var accUpdateBtn = document.getElementsByClassName("account-update");
+            var okUpdateBtn = document.getElementsByClassName("account-update-ok");
+            var pAlias = document.getElementsByClassName("account-alias");
+            var inputAlias = document.getElementsByClassName("account-alias2");
+
+            function clickChangeBtn() {
+
+                for(var i=0;i<accUpdateBtn.length;i++){
+
+                    pAlias[i].classList.remove("hidden");
+                    inputAlias[i].classList.add("hidden");
+
+                    accUpdateBtn[i].classList.remove("hidden");
+                    okUpdateBtn[i].classList.add("hidden");
+
+                }
+            };
+
+
+            function updateAname(myaccountNum){
+
+                var myaccountName = $('#aname' + myaccountNum).val();
+
+                console.log('음..' + myaccountName)
+
+                $.ajax({
+                    type : "POST",
+                    url : "/mypage/updateAname",
+                    data : {
+                    myaccountNum : myaccountNum,
+                    myaccountName : myaccountName
+                    },
+                    success : function(result){
+                        console.log("수정성공..!" + result[0].selectAname);
+
+                        $('#account-alias' + myaccountNum).text(result[0].selectAname);
+                        $('#accountDel-title' + myaccountNum).text('[' + result[0].selectAname+ ']' +'계좌를 정말 삭제하시겠습니까?');
+
+                    },
+                    error:function(xhr,status,error) {
+                        console.log("수정에러..!" + error);
+                    }
+
+                });
+
+            };
+
+
+
+        </script>
+
+        <div class="password-box">
+            <button class="passwordBtn">
+                <b>크루즈웹</b> 이체 비밀번호 
+                <a th:href="@{http://192.168.16.27:8082/mypage/mypage_webPassword}">등록 </a> |
+                <a th:href="@{http://192.168.16.27:8082/mypage/mypage_webPassword}">변경 </a>
+            </button>
+        </div>
+
+        <!-- 크스롤 -->
+        <div class="account-scroll-box">
+            <div class="account">
+                <button class="account-scrollBtn" onclick="goToScroll('mySchedule-wrap')">
+                    <span class="material-symbols-sharp">
+                        stat_minus_2
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 계좌 등록 모달 -->
+    
+    <!-- 약관동의 -->
+
+    <div class="modal-div1">
+        <div class="content">
+            <span class="closeBtn1">&times;</span>
+            <div class="modal-cover">
+                <h2>약관동의</h2>
+                <div class="modal-chk-box">
+                    <div class="agree-all-box">
+                        <input type="checkbox" id="agree-all"/><label for="agree-all"></label>
+                        <span class="agree-text">전체동의</span>
+                    </div>
+                    <hr/>
+                    <div class="agree-select-box">
+                        <input type="checkbox" id="agree-chk1" name="agreeChk"/><label for="agree-chk1"></label>
+                        <button class="agree-text" id="agree-show">개인정보 수집 및 이용 동의 (필수) &gt; </button><br/>
+
+                        <!-- hide -->
+                        <div class="agree-hide-box" id="agree-hide">
+                            <textarea readonly disabled>&#10;&#10;제 1조 총칙&#10;&#10;크루즈(주) (서울특별시 강남구 테헤란로 124, 4층)는 (이하 ’회사’는) 개인정보보호를 매우 중요시하며, 개인정보보호법 등 관계법령의 규정을 준수하여 개인정보를 최선을 다하여 보호함은 물론 개인정보보호법에 의거한 개인정보 처리방침을 통하여 고객(정보주체)의 개인정보보호 및 권익을 보호하고 이와 관련한 고충을 원활하게 처리할 수 있도록 합니다.&#10;&#10;제 2조 개인정보의 수집 및 이용목적&#10;&#10;회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 개인정보 보호법 등에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.&#10;&#10;1. 회사에서 제공하는 회원제 서비스의 본인 확인 및 이용을 위해 활용&#10;회사에서 제공하는 회원제 서비스의 가입 및 이용을 위한 활용 정보주체의 개인정보 열람, 정정, 삭제, 처리정지 요구 시 본인확인 및 개인식별회원제 서비스의 본인 확인, 서비스에 대한 만족도 조사회원제 서비스의 본인 확인, 서비스에 대한 만족도 조사&#10;&#10;2. 회원관리 및 본인확인&#10;본인 확인, 가입의사 확인, 회원자격 유지/관리, 서비스 부정이용 방지 웹사이트 ID 관리, 회원에 대한 고지사항 전달 민원 처리를 위한 민원인의 신원 확인, 민원사항 확인 및 처리, 기타 연락 및 통지&#10;&#10;3. 마케팅 및 광고에 활용&#10;신규 서비스 (제품 포함) 및 이벤트 정보 안내, DM, SMS, 우편, 고객별 통계분석자료 활용, 시장조사&#10;&#10;4. 서비스 개선&#10;접속빈도 파악 및 서비스 이용에 대한 통계처리 등
+                            </textarea>
+                        </div>
+
+                        <input type="checkbox" id="agree-chk2" name="agreeChk"/><label for="agree-chk2"></label>
+                        <button class="agree-text" id="agree-show2">개인정보 제3자 제공 동의 (필수) &gt;</button><br/>
+
+                        <!-- hide -->
+                        <div class="agree-hide-box" id="agree-hide2">
+                            <textarea readonly disabled>&#10;&#10;제 1조 개인정보의 제3자 제공&#10;&#10;회사는 개인정보를 "1. 개인정보의 처리목적 및 수집항목"에서 고지한 범위내에서 사용하며, 정보주체의 사전 동의 없이는 동 범위를 초과하여 이용하거나 원칙적으로 개인정보를 외부에 공개하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.&#10;&#10;- 정보주체가 사전에 동의한 경우&#10;- 법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우&#10;간혹 입사 지원자에게 회사와 특수관계에 있는 회사(자회사, 계열사 등)에 입사제안을 드릴 수 있으며, 이 경우 반드시 사전에 입사 지원자에게 개별 연락하여 동의 절차를 거친 후 입사 지원서를 해당 회사로 이관합니다.
+                            </textarea>
+                        </div>
+
+                        <input type="checkbox" id="agree-chk3" name="agreeChk"/><label for="agree-chk3"></label>
+                        <button class="agree-text" id="agree-show3">오픈뱅킹 참여은행 출금이체 동의 (필수) &gt;</button><br/>
+
+                        <!-- hide -->
+                        <div class="agree-hide-box" id="agree-hide3">
+                            <textarea readonly disabled>&#10;&#10;제1조 약관의 적용&#10;&#10;오픈뱅킹공동업무를 기반으로 이용기관이 개발한 핀테크 서비스를 통해 본인명의 계좌의 금융정보를 확인하고자 하는 개인(이하 “사용자”라 한다)과 크루즈(주)(이하 “회사”라 한다)에 대하여 이 약관을 적용합니다.&#10;&#10;제2조 용어의 정의&#10;&#10;1. “오픈뱅킹공동업무”란 이용기관이 핀테크 서비스를 용이하게 개발하고, 제공할 수 있도록 금융권에서 공동으로 구축하여 운영하는 표준화된 오픈 API 플랫폼에 대한 제반 업무를 말합니다.&#10;2. “이용기관”이란 금융결제원과 오픈뱅킹공동업무 이용계약을 체결하고 이용승인을 받은 기업 을 말합니다. 여기에는 회사를 제외한 금융기관도 포함됩니다.&#10;3. “금융정보조회”란 사용자가 핀테크 서비스를 통해 제5조에 명시하는 본인명의 계좌의 금융정보조회 요청시 회사가 금융정보를 제공하는 업무를 말합니다.&#10;4. “오픈뱅킹중계센터”란 오픈뱅킹공동업무 관련 시스템을 구축하고 운영하며, 회사와 이용기관을 서로 중계하는 곳으로 융결제원이 운영합니다.
+                            </textarea>
+                        </div>
+
+                    </div>
+                </div>
+                <div>
+                    <button class="nextBtn1">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달2 -->
+    <div class="modal-div2">
+        <div class="content">
+            <span class="closeBtn2">&times;</span>
+            <div class="modal-cover">
+                <h2>계좌 선택</h2>
+                <div class="bank-box1">
+                    <div>
+                        <div class="bankBtn" id="kakao">카카오뱅크</div>
+                        <div class="bankText">카카오뱅크</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="kb">KB 국민은행</div>
+                        <div class="bankText">국민은행</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn"  id="nh">NH 농협</div>
+                        <div class="bankText">농협</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="sinhan">신한은행</div>
+                        <div class="bankText">신한은행</div>
+                    </div>
+                </div>
+                <div class="bank-box2">
+                    <div>
+                        <div class="bankBtn" id="toss">토스뱅크</div>
+                        <div class="bankText">토스뱅크</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="hana">하나은행</div>
+                        <div class="bankText">하나은행</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="ibk">IBK 기업은행</div>
+                        <div class="bankText">기업은행</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="kbank">케이뱅크</div>
+                        <div class="bankText">캐이뱅크</div>
+                    </div>
+                </div>
+                <div class="bank-box3">
+                    <div>
+                        <div class="bankBtn" id="woori">우리은행</div>
+                        <div class="bankText">우리은행</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="city">씨티뱅크</div>
+                        <div class="bankText">씨티뱅크</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="gwangju">광주은행</div>
+                        <div class="bankText">광주은행</div>
+                    </div>
+                    <div>
+                        <div class="bankBtn" id="kfcc">MG 새마을금고</div>
+                        <div class="bankText">새마을금고</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="nextBtn2" >확인</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달3 -->
+    <!-- form 태그로 전체 insert, 모달1,2의 정보는 hidden으로 넘기기
+    모달1은 db에 저장되지 않고 생색만 내기 -->
+    <form action="" method="post" name="accForm">
+    <div class="modal-div3">
+        <div class="content">
+            <span class="closeBtn3">&times;</span>
+            <div class="modal-cover">
+                <!-- 모달 내용 -->
+                <h2>계좌 등록</h2>
+                <div class="accountName-box">
+                    <div class="account-text">이름</div>
+                    <input type="text" class="account-input" th:value="${userInfo.user_name}" disabled/>
+                </div>
+                <div class="accountNum-box">
+                    <div class="account-text">계좌번호</div>
+                    <input type="text" id="account-input1" class="account-input" name="anum" placeholder="계좌번호를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                    <div class="resultDiv" id="resultNum"></div>
+                </div>
+                <div class="accountPwd-box">
+                    <div class="account-text">계좌 비밀번호</div>
+                    <input type="password" class="accountPwd-input" name="aPwd" placeholder="계좌 비밀번호 4자리를 입력해주세요." oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                    <button type="button" class="account-authBtn">인증</button>
+                    <div class="resultDiv" id="resultPwd"></div>
+                </div>
+                <div>
+                    <button class="addBtn" type="button" onclick="insertAccSubmit()">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.forms['accForm'];
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // 폼이 서버로 전송되는 것을 막습니다.
+
+        const formData = new FormData(form); // 폼 데이터를 가져옵니다.
+         const accessToken = localStorage.getItem('accessToken');
+        // AJAX를 사용하여 서버로 POST 요청을 전송합니다.
+        fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers:{
+                'Authorization' : accessToken
+            }
+        })
+        .then(response => {
+            if (response.redirected) {
+
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+
+</script>
+
+
+    <!-- 계좌 삭제 안내 모달창 -->
+        <!-- 반복문..! -->
+
+    <div th:id="|accountDelM${dto.myaccount_anum}|" class="accountDelmodal-div" th:each="dto:${accountLists}">
+        <div class="accountDel-content">
+            <div class="accountDel-box">
+                <div class="accountDel-title" th:id="|accountDel-title${dto.myaccount_anum}|" th:text="|[${dto.myaccount_name}] 계좌를 정말 삭제하시겠습니까?|"></div>
+                <div class="yesno-box">
+                    <button class="yesBtn" th:onclick="clickDelYesBtn();deleteMyaccount([[${dto.myaccount_anum}]])">예</button>
+                    <button class="noBtn">아니오</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // 계좌 삭제 모달 예 클릭 시 함수
+        function clickDelYesBtn() {
+
+            var accUpdateBtn = document.getElementsByClassName("account-update");
+
+            for(var i=0;i<accUpdateBtn.length;i++){
+
+                $('.accountDelmodal-div').eq(i).css('display','none');
+
+                $('body').css('overflow', 'auto');
+                $('body').css('overflow-x', 'hidden');
+
+            }
+        };
+
+        // 계좌 삭제 함수
+        function deleteMyaccount(myaccountNum){
+
+            $.ajax({
+                type : "POST",
+                url : "/mypage/deleteAccount",
+                data : {
+                myaccountNum : myaccountNum, // 등록된 계좌번호
+                },
+                success : function(result){
+                    console.log("삭제성공..!");
+
+                    alert("정상적으로 삭제 완료되었습니다.");
+                    location.reload();
+                },
+                error:function(xhr,status,error) {
+                    // 모임통장 계좌번호와 같으면 에러로 넘어옴
+                    console.log("삭제에러..!" + error);
+
+                    alert("크루통장 사용 중으로 삭제가 불가능합니다.");
+                    location.reload();
+                }
+            });
+        };
+
+    </script>
+
+    <!-- 계좌 상세 모달 반복문 -->
+    <div class="account-modal hidden" th:id="|account-modal${dto.myaccount_anum}|" th:each="dto:${accountLists}">
+        <div class="modal-content">
+            <span class="closeBtn" th:id="|closeBtn${dto.myaccount_anum}|" th:onclick="closeAccount([[${dto.myaccount_anum}]])">&times;</span>
+            <div class="modal-container">
+                <div class="open-aname" th:text="${dto.myaccount_name}"></div>
+                <div class="open-account" th:text="${dto.myaccount_anum2}"></div>
+                <div class="openuse-balance" th:text="${dto.myaccount_balance}"></div>
+
+                <div class="line"></div>
+
+                <div class="select-cover">
+                    
+                    <div class="area-custom-select">
+                        <div class="custom-select" tabindex="0">
+                          <span class="custom-select-text">1개월</span>
+                          <img src="/images/mypage/iconmonstr-angel-down-thin-12.png" class="custom-select-arrow">
+                        </div>
+                        <ul class="custom-select-list" style="display:none;">
+                            <li class="custom-select-option" th:id="|oneMonth${dto.myaccount_anum}|">1개월</li>
+                            <li class="custom-select-option" th:id="|threeMonth${dto.myaccount_anum}|" th:onclick="threeMonths([[${dto.myaccount_anum}]]);">3개월</li>
+                            <li class="custom-select-option" th:id="|sixMonth${dto.myaccount_anum}|" th:onclick="sixMonths([[${dto.myaccount_anum}]]);">6개월</li>
+                        </ul>
+                        <input type="hidden" th:id="|monthVal${dto.myaccount_anum}|" name="months" value="1">
+                    </div>
+
+
+
+                    <input type="text" class="openuse-input-search" th:id="|search${dto.myaccount_anum}|"/>
+                    <button class="openuse-searchBtn" th:onclick="accountDivClick([[${dto.myaccount_anum}]])">
+                        <span class="material-symbols-outlined" style="color: #0C0CCA;">
+                            search
+                        </span>
+                    </button>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="openuse-box" th:id="|openuseList${dto.myaccount_anum}|">
+                    <!-- 계좌 내역 -->
+                </div>
+
+                <div class="line"></div>
+
+            </div>
+            
+        </div>
+    </div>
+
+
+
+
+    <!-- 웨이브 배경 -->
+    <div class="wave2"><div class="white"></div></div>
+
+    <!-- 일정 시작 -->
+    <div class="mySchedule-wrap">
+        <div class="schedule-title">
+            <div class="crew-title">
+                <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Symbols/Triangular%20Flag.png" alt="Triangular Flag" width="60" height="60" />
+
+                내 일정 보기
+            </div>
+        </div>
+
+        <div class="mySchedule-box">
+            <div id='calendar'></div>
+
+            <!-- 하루 일정 조회 -->
+            <div class="oneDay-wrap">
+                <div class="sche-date">날짜를 선택해 일정을 조회해보세요😊</div>
+                <div class="oneday hidden">
+                   <!-- 내용 들어옴 -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+<!-- 두혁? -->
+<p id="sessionGroup" th:if="${session.group != null}" th:text="${session.group}" style="display:none"></p>
+<p id="sessionEmail" th:if="${session.email != null}" th:text="${session.email}" style="display:none"></p>
+<p id="sessionNum" th:if="${session.num != null}" th:text="${session.num}" style="display:none"></p>
+
+
+<th:block th:replace="nav_footer/nav_footer :: footer"></th:block>
+
+
+
+    <!-- script -->
+
+    <script src="/js/mypage/mypage_crew.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            var openAccPwd = /*[[${openAccPwd}]]*/; //가상계좌 비밀번호
+            var myaccountList = /*[[${myaccountList}]]*/; //등록된 계좌정보
+        /*]]*/
+    </script>
+    <script th:inline="javascript" th:src="@{/js/mypage/mypage_account.js}"></script>
+    <!-- 일정 -->
+    <script src="/js/mypage/scroll.js"></script>
+    <script src="/js/mypage/swiper.js"></script>
+    <script src="/js/mypage/selectbox.js"></script>
+    <script src="/js/mypage/mypage_schedule.js"></script>
+
+
+<th:block th:replace="nav_footer/nav_footer :: head"></th:block>
+
+
+
+    
+</body>
+
+<script>
+
+
+    //계좌 내역 조회
+
+        function accountDivClick(accountNum) {
+
+            var months = $('#monthVal' + accountNum).val();
+            var search = $('#search' + accountNum).val();
+
+            var word = search.toLowerCase(); //검색값 대소문자 구분 안하게 함
+
+            console.log("넘기는 계좌번호>>>>>>" + accountNum);
+
+            $.ajax({
+                type : "POST",
+                url : "/mypage/useAccount",
+                data : {
+                accountNum : accountNum,
+                months : months
+                },
+                success : function(result){
+                    console.log("성공..!");
+                    console.log("넘어온 계좌번호" + accountNum);
+
+                    var str = '';
+
+                    $.each(result, function(i) {
+
+                        // 검색 시
+
+                            console.log("검색한 단어" + word);
+
+                            var searchContent = result[i].openUseContent.toLowerCase();
+
+                            if(searchContent.includes(word)){
+
+                                if($.trim(result[i].openuseAssort) == 'I'){
+
+                                    str += '<div class="openuse-cover">'
+                                        str += '<div class="dateDiv">'
+                                            str += '<p class="openuse-date">' + result[i].openUseDate + '</p>'
+                                        str += '</div>'
+                                        str += '<div class="contentDiv">'
+                                            str += '<p class="openuse-content">' + result[i].openUseContent + '</p>'
+                                        str += '</div>'
+                                        str += '<div class="moneyDiv">'
+                                            str += '<p class="openuse-money2">' + result[i].openUseIn + '</p>'
+                                        str += '</div>'
+                                    str += '</div>'
+
+                                }else if($.trim(result[i].openuseAssort) == 'O'){
+
+                                    str += '<div class="openuse-cover">'
+                                        str += '<div class="dateDiv">'
+                                            str += '<p class="openuse-date">' + result[i].openUseDate + '</p>'
+                                        str += '</div>'
+                                        str += '<div class="contentDiv">'
+                                            str += '<p class="openuse-content">' + result[i].openUseContent + '</p>'
+                                        str += '</div>'
+                                        str += '<div class="moneyDiv">'
+                                            str += '<p class="openuse-money">' + result[i].openUseOut + '</p>'
+                                        str += '</div>'
+                                    str += '</div>'
+
+                                }
+                            }
+
+
+                    }); //반복문 끝
+
+                    $('#openuseList' + accountNum).children().remove(); //자식 요소들을 지워줌
+                    $('#openuseList' + accountNum).append(str); //그 담에 더함
+
+
+                },
+                error:function(xhr,status,error) {
+                    console.log("에러..!" + error);
+                }
+            });
+        };
+
+</script>
+
+<script>
+
+    function oneMonths(myaccountNum){
+
+        $('#monthVal' + myaccountNum).val(1);
+
+        console.log('첫클릭>>>>>>' + myaccountNum);
+
+        accountDivClick(myaccountNum);
+
+    };
+
+    function threeMonths(myaccountNum){
+
+        $('#monthVal' + myaccountNum).val(3);
+
+        console.log('3클릭>>>>>>' + myaccountNum);
+
+        accountDivClick(myaccountNum);
+
+    };
+
+     function sixMonths(myaccountNum){
+
+        $('#monthVal' + myaccountNum).val(6);
+
+        console.log('6클릭>>>>>>' + myaccountNum);
+
+        accountDivClick(myaccountNum);
+
+    }
+
+
+</script>
+
+<script th:src="@{/js/homePage/homePage2.js}"></script>
+</html>

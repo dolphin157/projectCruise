@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ----------------- -->
+    <link rel="stylesheet" href="/css/mypage/mypage_userOut.css"/>
+    <link rel="stylesheet" href="/css/mypage/mypage_userTab.css"/>
+    <link rel="stylesheet" href="/css/mypage/mypage_alert.css"/>
+    <!-- 폰트 -->
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>크루즈 :: 내 알림</title>
+</head>
+<body>
+
+<div style="background-color:white;">
+    <th:block th:replace="nav_footer/nav_footer :: header"></th:block>
+</div>
+
+    
+    <div class="user-container">
+        <!-- 메뉴 -->
+        <th:block th:replace="mypage/mypage_userTab :: tab"></th:block>
+
+        <!-- 게시글 관리 -->
+        <div class="alert-cover">
+            <ul class="tabs">
+                <li class="tab-link current" data-tab="tab-1">내 알림</li>
+            </ul>
+
+            <div id="tab-1" class="tab-content current">
+                <div class="alert-wrap">    
+                    <div class="top-bar">
+                        <div th:if="${#lists.size(myAlertList)}>0">
+                            <input type="checkbox" id="all-alert-chk" value=""/>
+                            <label for="all-alert-chk"></label>
+                            <span class="chk-text">전체 선택</span>
+                        </div>
+                        <div th:if="${#lists.size(myAlertList)}>0">
+                            <button class="top-btn">삭제</button>
+                        </div>
+                    </div>
+
+                    <!-- 알림이 없을 때 -->
+                    <div th:if="${#lists.isEmpty(myAlertList)}" style="text-align: center;margin-top: 70px;margin-bottom: 70px;font-family: NanumSquare;">
+                        등록된 알림이 없습니다.
+                    </div>
+
+                    <!-- 반복문 -->
+                    <div class="alert-div" th:if="${#lists.size(myAlertList)}>0" th:each="dto:${myAlertList}">
+                        <input type="checkbox" th:id="|chk-alert-${dto.myalert_num}|" name="alert-chk" th:value="${dto.myalert_num}"/>
+                        <label th:for="|chk-alert-${dto.myalert_num}|"></label>
+                        <div class="alert-div2">
+                            <div class="alert-div3">
+                                <div class="alert-div4">
+                                    <div class="alert-type" th:text="${dto.myalert_assort}">알림분류</div>
+                                    <div class="alert-date" th:text="${dto.myalert_adate}">날짜</div>
+                                </div>
+                            </div>
+                            <a th:if="${#strings.equals(dto.myalert_assort, '공지')}" th:href="@{|http://192.168.16.27:8082/board/article?num=${dto.board_num}&crewName=${dto.crew_name}|}" class="alert-content" th:text="${dto.myalert_content}"></a>
+                            <a th:unless="${#strings.equals(dto.myalert_assort, '공지')}" th:href="@{|http://192.168.16.27:8082/crew?crewNum=${dto.crew_num}|}" class="alert-content" th:text="${dto.myalert_content}"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- 회원탈퇴 모달은 user_tab에 같이 있음 -->
+
+
+<th:block th:replace="nav_footer/nav_footer :: footer"></th:block>
+<th:block th:replace="nav_footer/nav_footer :: head"></th:block>
+
+    <script src="/js/mypage/mypage_userOut.js"></script>
+    <script src="/js/mypage/mypage_alert.js"></script>
+
+</body>
+
+
+
+<script>
+
+    //알림 삭제
+$(document).ready(function () {
+
+    $('.top-btn').on('click', function () {
+
+        var chkAlertLists = [];
+
+        $('input[name=alert-chk]:checked').each(function () {
+
+            chkAlertLists.push($(this).val());
+
+        });
+
+        console.log(chkAlertLists.join(',')); //배열을 문자열로 변경해서 출력
+
+        $.ajax({
+            type : "POST",
+            url : "/mypage/mypage_myAlert",
+            data : {
+            chkAlertLists : chkAlertLists
+            },
+            success : function(result){
+                console.log("알림 삭제 성공..!" + result);
+                $(location).attr('href','/mypage/mypage_myAlert')
+            },
+            error:function(xhr,status,error) {
+                console.log("알림 삭제 에러..!" + error);
+            }
+        });
+    });
+});
+
+
+
+</script>
+
+
+</html>

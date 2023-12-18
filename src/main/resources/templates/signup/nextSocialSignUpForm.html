@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>소셜회원가입</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/nextSocialSignUpForm/nextSocialSignupForm.css}"/>
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+    <script src="https://kit.fontawesome.com/79ef7aaf2e.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script th:src="@{/js/nextSocialSignupForm/postCode.js}"></script>
+    <script th:src="@{/js/nextSocialSignupForm/phoneNumber.js}"></script>
+
+
+</head>
+<body>
+
+<main>
+<div id="form-container">
+<h2>소셜 회원가입 추가정보</h2>
+    <br/><br/>
+
+    <div class="signup-form-container">
+        <form id="signupForm" action="/socialSignupProcessing" method="post" onsubmit="showAlert();">
+            <div class="container">
+                <div class="insert">
+
+
+
+                    <div class="signup-form">
+
+                        <div class="form-group">
+                            <label for="name">이름</label>
+                            <input class="form-control" type="text" id="name" name="name" maxlength="5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone-number-input">핸드폰 번호</label>
+                            <input class="form-control" id="phone-number-input" type="text" name="tel" maxlength="11" placeholder="숫자만 입력해주세요" required>
+                            <div id="phone-number-error" class="error-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="addr1">우편번호</label>
+                            <div class="zip-code">
+                            <input class="form-control" style="width: 40%;" placeholder="우편번호" id="addr1" type="text" required>
+                            <button type="button" class="btn btn-default" onclick="execPostCode();"><i class="fa fa-search"></i> 우편번호 찾기</button>
+                            </div>
+                            </div>
+
+                        <div class="form-group">
+                            <label for="addr2">도로명 주소</label>
+                            <input class="form-control" style="top: 5px;" placeholder="도로명 주소" name="address1" id="addr2" type="text" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="addr3">상세주소</label>
+                            <input class="form-control" placeholder="상세주소" name="address2" id="addr3" type="text" required>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="create">
+                    <input class="btn-submit" type="submit" value="회원가입완료">
+                </div>
+
+            </div>
+
+    </form>
+    </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cruise.project_cruise.mapper.MypageMapper">
+
+    <!-- 내 모임 전체 조회 -->
+    <select id="getCrews" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.CrewDTO">
+        select crew_name, crew_accountid,(SUBSTR(crew_accountid, 1, 3) || '*******' || SUBSTR(crew_accountid, -4)) as crew_accountid2, crew_info, crew_num, captain_email from crew
+        where crew_num in (select crew_num from crew_member where cmem_email=#{cmem_email})
+    </select>
+
+    <!-- 내 모임 캡틴이메일 하나만 조회 -->
+    <select id="getOneCaptain" parameterType="map" resultType="java.lang.String">
+        select captain_email from crew
+        where crew_num in (select crew_num from crew_member where cmem_email=#{email} and crew_num=#{crew_num})
+    </select>
+
+    <!-- 내 모임 탈퇴하기   -->
+    <delete id="deleteCrew" parameterType="map">
+        delete crew_member where crew_num=#{crew_num} and cmem_email = #{cmem_email}
+    </delete>
+
+    <!-- 내 모임수 select - zero,all 구분   -->
+    <select id="getCrewNums" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.CrewMemberDTO">
+        select crew_num from crew_member where cmem_email = #{cmem_email}
+    </select>
+
+    <!-- 가상계좌 비번과 등록 시 입력할 비번 비교를 위한 가상계좌 비번, 계좌번호 select -->
+    <!-- 가상계좌번호 입력 계좌번호 비교 -->
+    <select id="getOpenAccPWd" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.develop.OpenBankDTO">
+        select open_password,open_account from openbank where open_name = (select user_name from users where email=#{email})
+    </select>
+
+    <!-- 계좌 등록 insert -->
+    <insert id="insertAccount" parameterType="map">
+        insert into my_account (myaccount_bank, myaccount_anum, myaccount_date, email, myaccount_name)
+        select ob.open_bank, ob.open_account, sysdate, u.email, ob.open_aname
+        from openbank ob
+        join users u on ob.open_name = u.user_name
+        where u.email = #{email}
+        and ob.open_account = #{myaccount_anum}
+    </insert>
+
+    <!-- 등록된 전체 계좌 조회 -->
+    <select id="getAccountList" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.MyAccountDTO">
+        select myaccount_anum,(SUBSTR(myaccount_anum, 1, 3) || '*******' || SUBSTR(myaccount_anum, -4)) as myaccount_anum2,myaccount_bank,myaccount_name from my_account
+        where email=#{email} order by myaccount_bank
+    </select>
+
+    <!-- 등록된 전체 계좌 '잔액'만 조회 -->
+    <select id="getAccountBals" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.develop.OpenBankDTO">
+        select open_balance from openbank
+        where open_account in
+        (select myaccount_anum from my_account where email = #{email}) order by open_bank
+    </select>
+
+    <!-- 등록된 한 계좌 조회 -->
+    <select id="getOneAccount" parameterType="map" resultType="com.cruise.project_cruise.dto.MyAccountDTO">
+        select myaccount_anum,(SUBSTR(myaccount_anum, 1, 3) || '*******' || SUBSTR(myaccount_anum, -4)) as myaccount_anum2,myaccount_bank,myaccount_name from my_account
+        where email=#{email} and myaccount_anum=#{myaccount_anum}
+    </select>
+
+    <!-- 등록된 계좌 내역 조회 -->
+    <select id="getUseAccounts" parameterType="map" resultType="com.cruise.project_cruise.dto.develop.OpenBankUsingDTO">
+        select to_char(openuse_date, 'YYYY-MM-DD') openuse_date,openuse_assort,openuse_content,openuse_outmoney,openuse_inmoney from openbank_use
+        where openuse_date >= (select to_char(add_months(sysdate,-#{monthNum}),'yyyy-mm-dd') as agomonths from dual)
+        and
+        open_account in (#{accountNum})
+        order by openuse_date desc
+    </select>
+
+    <!-- 등록된 계좌 계좌명 수정 -->
+    <update id="updateAname" parameterType="map">
+        update my_account set myaccount_name = #{myaccount_name} where myaccount_anum = #{myaccount_anum}
+    </update>
+
+    <!-- 등록된 계좌 삭제 -->
+    <delete id="deleteMyaccount" parameterType="java.lang.String">
+        delete from my_account where myaccount_anum = #{myaccount_anum}
+    </delete>
+
+    <!-- 이체 비밀번호 조회 -->
+    <select id="getWebpassword" parameterType="java.lang.String" resultType="java.lang.String">
+        select pay_password from users where email = #{email}
+    </select>
+
+    <!-- 이체 비밀번호 등록/변경 -->
+    <update id="updateWebpassword" parameterType="map">
+        update users set pay_password = #{pay_password} where email=#{email}
+    </update>
+
+    <!-- 내 정보 수정 데이터 조회 -->
+    <select id="getUserInfo" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.UserDTO">
+        select user_name,email,tel,address1,address2,user_password from users where email=#{email}
+    </select>
+
+    <!-- 내 정보 수정 -->
+    <update id="updateUserInfo" parameterType="map">
+        update users set tel=#{tel},address1=#{address1},address2=#{address2} where email=#{email}
+    </update>
+
+    <!-- 내 정보 비밀번호만! 수정 -->
+    <update id="updateUserPwd" parameterType="map">
+        update users set user_password=#{user_password} where email=#{email}
+    </update>
+
+    <!-- 크루명 조회 / 게시글,댓글에 필요 -->
+    <select id="getCrewName" parameterType="int" resultType="java.lang.String">
+        select crew_name from crew where crew_num = #{crew_num}
+    </select>
+
+    <!-- 내 게시글 조회 -->
+    <select id="getMyboard" parameterType="map" resultType="com.cruise.project_cruise.dto.CrewBoardDTO">
+        select * from(
+        select rowNum rnum,data.* from (
+        select crew_num,board_num,board_subject,to_char(board_created, 'YYYY-MM-DD') board_created_tochar,hitcount from crew_board
+        where email=#{email} order by board_created desc) data)
+        <![CDATA[
+        where rnum>=#{start} and rnum<=#{end}
+        ]]>
+    </select>
+
+    <!-- 내 게시글 삭제 -->
+    <delete id="deleteMyboard" parameterType="int">
+        delete from crew_board where board_num in (#{board_num})
+    </delete>
+
+    <!-- 내 댓글 조회 -->
+    <select id="getMyComment" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.CrewCommentDTO">
+        select crew_num,board_num,comment_num,comment_content,to_char(comment_created, 'YYYY-MM-DD') comment_created_tochar from crew_comment
+        where email=#{email} order by comment_created desc
+    </select>
+
+    <!-- 게시글 제목 조회/댓글에 필요 -->
+    <select id="getBoardSubject" parameterType="int" resultType="java.lang.String">
+        select board_subject from crew_board where board_num = #{board_num}
+    </select>
+
+    <!-- 내 댓글 삭제 -->
+    <delete id="deleteMycomment" parameterType="int">
+        delete from crew_comment where comment_num in (#{comment_num})
+    </delete>
+    
+    <!-- 게시글 전체 수/ 페이징처리 -->
+    <select id="getBoardCount" parameterType="java.lang.String" resultType="int">
+        select nvl(count(*),0) from crew_board where email=#{email}
+    </select>
+
+    <!-- 일정 조회 -->
+    <select id="getSchedule" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.ScheduleDTO">
+        select crew_num,sche_num,sche_title,sche_assort,sche_start,sche_end,sche_alldaytf from schedule
+        where crew_num in (select crew_num from crew_member where cmem_email=#{email})
+    </select>
+
+    <!-- 일정 하루 조회 -->
+    <select id="getOneSchedule" parameterType="map" resultType="com.cruise.project_cruise.dto.ScheduleDTO">
+        select crew_num,sche_num,sche_title,sche_assort,to_char(sche_start, 'mm.dd HH24:MI') sche_start,
+        to_char(sche_end, 'mm.dd HH24:MI') sche_end,sche_alldaytf from schedule
+        where to_date(#{sche_start}, 'yyyy-mm-dd') between to_char(sche_start, 'yyyy-mm-dd') and to_char(sche_end, 'yyyy-mm-dd')
+        and crew_num in (select crew_num from crew_member where cmem_email=#{email})
+    </select>
+
+    <!-- 일정에 뿌려줄 크루이름만 조회 -->
+    <select id="getScheCrewName" parameterType="map" resultType="java.lang.String">
+        select crew_name from crew
+        where crew_num in (select crew_num from crew_member
+        where cmem_email = #{email} and crew_num = #{crew_num})
+    </select>
+
+    <!-- 회원 탈퇴 -->
+    <delete id="deleteUser" parameterType="java.lang.String">
+        delete from users where email = #{email}
+    </delete>
+
+
+
+    <!-- 내알림 insert -->
+    <insert id="insertMyAlert" parameterType="com.cruise.project_cruise.dto.MyAlertDTO">
+        insert into my_alert (myalert_num,crew_num,myalert_assort,myalert_content,myalert_adate,email,board_num)
+        values (#{myalert_num},#{crew_num},#{myalert_assort},#{myalert_content},#{myalert_adate},#{email},#{board_num})
+    </insert>
+
+    <!-- 내 알림 max myalert_num -->
+    <select id="maxMyalertNum" resultType="int">
+        select nvl(max(myalert_num),0) from my_alert
+    </select>
+
+    <!-- 내 알림 조회 -->
+    <select id="getMyalert" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.MyAlertDTO">
+        <![CDATA[
+        select myalert_num,crew_num,myalert_content,myalert_assort,to_char(myalert_adate,'yyyy.mm.dd') myalert_adate,board_num from my_alert
+        where email=#{email} and myalert_adate<=sysdate order by myalert_num desc
+        ]]>
+    </select>
+
+    <!-- 내 알림 삭제 -->
+    <delete id="deleteMyalert" parameterType="int">
+        delete from my_alert where myalert_num = #{myalert_num}
+    </delete>
+
+    <!-- nav 알림 조회 3개 까지 -->
+    <select id="getNavAlert" parameterType="java.lang.String" resultType="com.cruise.project_cruise.dto.MyAlertDTO">
+        <![CDATA[
+        select rownum,crew_num,myalert_num, myalert_content, myalert_assort, to_char(myalert_adate, 'yyyy.mm.dd') myalert_adate,board_num
+        from (select * from my_alert
+        where email = #{email} and myalert_adate <= sysdate
+        order by myalert_num desc)
+        where rownum <= 3
+        ]]>
+    </select>
+
+    <!-- 초대 승락 시 my_alert에 사용할 crewName select -->
+    <select id="getCrewNameA" parameterType="int" resultType="java.lang.String">
+        select crew_name from crew where crew_num = #{crew_num}
+    </select>
+
+    <!-- 내 게시글 조회인데 링크 연결에만 사용 -->
+    <select id="getMyboardLink" parameterType="map" resultType="com.cruise.project_cruise.dto.CrewBoardDTO">
+        select crew_num,board_num,board_subject,to_char(board_created, 'YYYY-MM-DD') board_created_tochar,hitcount from crew_board
+        where email=#{email} order by board_created desc
+    </select>
+
+
+</mapper>

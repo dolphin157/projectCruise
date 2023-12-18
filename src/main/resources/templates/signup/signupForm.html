@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 화면</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/signUpForm/signUpForm.css}"/>
+
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/79ef7aaf2e.js" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+    <script th:src="@{/js/signUpForm/passwordVerify.js}"></script>
+    <script th:src="@{/js/signUpForm/emailVerify.js}"></script>
+    <script th:src="@{/js/signUpForm/passwordToggle.js}"></script>
+    <script th:src="@{/js/signUpForm/postCode.js}"></script>
+
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const accessToken = localStorage.getItem('accessToken');
+            const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/;
+
+           if (accessToken || isAuthenticated) {
+            }else{
+                showOrText();
+            }
+        });
+
+        function showOrText(){
+
+                    const orText = document.createElement('div');
+                    orText.className = "or-text";
+                    orText.innerHTML = '계정이 있으신가요? <a href="/login">로그인을 해주세요!</a>';
+
+                    const registrationContainer = document.querySelector('.registration-container');
+                    registrationContainer.appendChild(orText);
+
+        }
+
+    </script>
+
+</head>
+<body>
+
+<main>
+    <div class="registration-container">
+        <div class="registration-header">
+            <h1>소셜 회원가입</h1>
+            <div class="social-icons">
+                <a th:href="@{/oauth2/authorization/google}">
+                    <img th:src="@{/images/google.jpeg}" alt="Google Logo" style="width: 80px; height: 80px; border-radius:5px;">
+                </a>
+                <a th:href="@{/oauth2/authorization/kakao}">
+                <img th:src="@{/images/kakao-사각아이콘.png}" alt="Kakao Logo" style="width: 80px; height: 80px;">
+                </a>
+                <a th:href="@{/oauth2/authorization/naver}">
+                <img th:src="@{/images/naver-사각아이콘.png}" alt="Naver Logo" style="width: 80px; height: 80px;">
+                </a>
+            </div>
+
+
+        </div>
+
+
+        <div id="or">
+            <span class="or-line"></span> OR <span class="or-line"></span>
+        </div>
+        <span id="showHiddenDivButton"><h1>일반 회원가입</h1></span>
+
+        <div id="hiddenDiv" style="display: none;">
+           <form id="signupForm" action="/submitSignup" method="post" class="form-field" onsubmit="showAlert();">
+               <div>
+                   <input id="emailInput" type="email" name="username" placeholder="이메일" required/>
+                   <span id="emailStatus"></span>
+               </div>
+               <div class="mainPassword">
+                   <input id="password" class="password" type="password" name="password" placeholder="비밀번호" required onchange="validatePassword();"/>
+                   <div class="eyes">
+                       <i class="fa-regular fa-eye-slash"></i>
+                   </div>
+               </div>
+               <p id="password-error"></p>
+               <div>
+                   <input type="text" name="name" placeholder="이름" required/>
+               </div>
+               <div>
+                   <input type="tel" id="phone-number-input" name="tel" placeholder="핸드폰번호(숫자만 입력해주세요)" required/>
+                   <div id="phone-number-error" class="error-message"></div>
+               </div>
+               <div>
+                   <input type="text" style="display:inline" placeholder="우편번호" id="addr1" required name="zipcode">
+                    <button type="button" class="btn btn-default zip-button" onclick="execPostCode();"><i class="fa fa-search"></i>우편번호 찾기</button>
+               </div>
+               <br/>
+               <div>
+                   <input type="text" name="address1" id="addr2" placeholder="주소" required/>
+               </div>
+               <div>
+                   <input type="text" name="address2" id="addr3" placeholder="상세주소" required/>
+               </div>
+               <input type="hidden" name="provider" value="local"/>
+               <input type="hidden" name="email_verified" value="1"/>
+               <button class="submit-button" type="submit">회원가입하기</button>
+           </form>
+        </div>
+
+
+
+    </div>
+</main>
+
+</body>
+</html>

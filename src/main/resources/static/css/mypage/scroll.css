@@ -1,0 +1,128 @@
+
+.crew-scroll-box {
+    position: relative;
+}
+
+.crew {
+ 
+    /* background-color: red; */
+    position: absolute;
+    /* top: -108px; */
+    right: -115px;
+    bottom: 0;
+}
+
+.crew-scrollBtn {
+    border-radius: 50%;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.account-scroll-box {
+    position: relative;
+}
+
+.account {
+    position: absolute;
+    right: -115px;
+    bottom: 64px;
+}
+
+.account-scrollBtn {
+    border-radius: 50%;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* 일정인데 아직 안해서 이름 없음 */
+.mySchedule-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 30px;
+    height: 100vh;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 3%;
+    margin-bottom: 10%;
+}
+
+.mySchedule-box{
+    display: flex;
+    gap: 30px;
+}
+
+.oneDay-wrap{
+
+    height: 520px;
+    border: 2px solid lightgray;
+    width: 30%;
+    margin-top: 65px;
+    overflow: auto;
+
+}
+
+.sche-date{
+    padding: 8% 8% 8% 5%;
+    font-family: 'NanumSquare';
+    font-weight: 900;
+    font-size: 15pt;
+    border-bottom: 2px solid lightgray;
+    background: #F2F2F2;
+}
+
+.clickDate {
+    border: 1px solid;
+}
+
+.oneDay-modal{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid lightgray;
+    padding: 20px 10px;
+    font-family: 'NanumSquare';
+}
+
+.sche-assort{
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+}
+
+.sche-title-box{
+
+}
+
+.sche-title{
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 10pt;
+}
+
+.sche-crewName{
+    font-size: 10pt;
+}
+
+.oneDay-div1{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.oneDay-div2{
+    font-size: 11pt;
+}
+
+.sche-start,.sche-end{
+    margin-bottom: 15px;
+    margin-top: 10px;
+    font-size: 13px;
+    text-align: end;
+}
+
+.sche-start{
+    margin-bottom: 15px;
+}

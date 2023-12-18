@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>크루즈 :: [[${param.crewName}]] 게시판</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css" rel="stylesheet"/>
+<link rel="stylesheet" type="text/css" href="/css/board/style.css"/>
+<link rel="stylesheet" type="text/css" href="/css/board/article.css"/>
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/f350c9c720.js" crossorigin="anonymous"></script>
+<script>
+	var num = "[[${dto.board_num}]]";
+	var params = "[[${params}]]";
+	var crew_num = "[[${dto.crew_num}]]";
+	const userEmail = "[[${email}]]";
+</script>
+<script type="text/javascript" th:src="@{/js/board/article.js}"></script>
+
+</head>
+<body>
+
+<th:block th:replace="nav_footer/nav_footer :: header"></th:block>
+
+<div id="bbs">
+	<div id="bbsArticle">
+		<div id="bbsArticle_header">
+			<input type="button" th:value="${param.crewName + ' 게시판 >>'}" class="article_button"
+				   th:onclick="|location='http://192.168.16.27:8082/board/list?crewNum=${dto.crew_num}'|"/>
+			<h2><br>[[${dto.board_subject}]]</h2>
+			<div class="article_button_flex">
+				<input type="button" value=" 수정 " class="article_button2"
+					   th:if="${email == dto.email}"
+					   th:onclick="'location=\'updated?board_num=' +
+					@{${dto.board_num }} + '&' + @{${params }} + '\''"/>
+				<input type="button" value=" 삭제 " class="article_button2"
+					   th:if="${email == dto.email}"
+					   th:onclick="'confirmDeleteArticle(' + ${dto.board_num} + ')'"/>
+			</div>
+			<div class="header">
+				<div>[[${dto.name}]]</div>
+				<div>
+					<span>[[${dto.board_created}]]</span>
+					<span th:text="'조회 ' + ${dto.hitCount}"></span>
+				</div>
+			</div>
+		</div>
+		<div id="bbsArticle_content">
+			<table>
+				<tr>
+					<td valign="top" height="200">
+
+					<img th:src="@{'/images/' + ${filepath}}" width="400" height="500" onerror="this.style.display = 'none'">
+
+					<textarea rows="12" cols="82"
+							  name="content"
+							  class="content-box" th:text="${dto.board_content}"
+							  disabled="disabled"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<!-- 댓글 리스트 -->
+	<div style="font-weight: bold;">
+		<i class="fa-regular fa-comment-dots fa-lg" style="padding-left: 15px;"></i> 댓글 <span id="commentCount"></span></div>
+	<div id="comment_box">
+		<div class="commentArea"></div>
+
+		<!-- 댓글 입력 폼-->
+		<div>
+			<div class="card-body">
+				<form name="comment-form" action="/board/comment/create" method="post"
+					  autocomplete="off" onsubmit="return sendIt();">
+					<input type="hidden" name="board_num" th:value="${dto.board_num}"/>
+					<input type="hidden" name="crew_num" th:value="${dto.crew_num}"/>
+					<div class="form-group">
+						<textarea name="comment_content" class="form-control" rows="3"
+								  style="font-family: NanumSquare; width: 100%;"
+								  placeholder="댓글을 남겨보세요"></textarea>
+					</div>
+					<a class="commentReply" onclick="insertComment();">등록</a>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:replace="nav_footer/nav_footer :: footer"></th:block>
+<th:block th:replace="nav_footer/nav_footer :: head"></th:block>
+</body>
+</html>
