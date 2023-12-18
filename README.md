@@ -28,7 +28,31 @@
 
 
 # 🔧개발환경
-![3_개발환경](https://github.com/eunzzzzz1/projectCruise/assets/139827141/ef300383-6c63-4c0f-9c2a-8f2c39abf3cd)
+Brief project description.
+
+## Table of Contents
+
+- [Development Environment](#development-environment)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+  - [Database](#database)
+  - [Testing](#testing)
+  - [Docker](#docker)
+
+## Development Environment
+
+### Frontend
+
+#### Prerequisites
+
+- [Windows 11](https://www.microsoft.com/en-us/windows/windows-11)
+- [Visual Studio Code](https://code.visualstudio.com/) or any preferred code editor
+- [HTML5](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5)
+- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [jQuery](https://jquery.com/)
+
+
 <br><br>
 
 <br><br>
