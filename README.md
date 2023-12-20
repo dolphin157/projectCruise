@@ -54,8 +54,9 @@
 # 🧑‍💻구현 기능
 
 ### 회원가입, 로그인
-<img width="667" alt="스크린샷 2023-10-31 오전 11 39 03" src="https://github.com/dolphin157/projectCruise/assets/102042928/0e704c58-7cd0-4a9b-a73e-5475aef67f77">
-![스크린샷 2023-10-31 오후 4 55 58](https://github.com/dolphin157/projectCruise/assets/102042928/85799695-77b0-4b69-9f61-9aee425158bb)
+<img width="608" alt="스크린샷 2023-10-31 오전 11 39 03" src="https://github.com/dolphin157/projectCruise/assets/102042928/0e704c58-7cd0-4a9b-a73e-5475aef67f77">
+<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/099a6e03-1e08-49d5-ad27-dc12089fa208")
+
 
 - 일반 로그인/회원가입
 - 소셜 로그인/회원가입
