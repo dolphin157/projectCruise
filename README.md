@@ -51,7 +51,7 @@
 <br><br>
 
 
-# 🧑‍💻구현 기능
+# 🧑‍💻구현 기능(이미지 첨부한 부분이 직접 구현한 부분)
 
 ### 회원가입, 로그인
 <img width="608" alt="스크린샷 2023-10-31 오전 11 39 03" src="https://github.com/dolphin157/projectCruise/assets/102042928/0e704c58-7cd0-4a9b-a73e-5475aef67f77">
