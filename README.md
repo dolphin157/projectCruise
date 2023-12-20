@@ -52,6 +52,39 @@
 
 
 # 🧑‍💻구현 기능
+
+### 회원가입, 로그인
+<img width="667" alt="스크린샷 2023-10-31 오전 11 39 03" src="https://github.com/dolphin157/projectCruise/assets/102042928/0e704c58-7cd0-4a9b-a73e-5475aef67f77">
+![스크린샷 2023-10-31 오후 4 55 58](https://github.com/dolphin157/projectCruise/assets/102042928/85799695-77b0-4b69-9f61-9aee425158bb)
+
+- 일반 로그인/회원가입
+- 소셜 로그인/회원가입
+- 최근 로그인 표기
+- Spring Security
+
+
+### 크루 초대하기
+![스크린샷 2023-10-31 오후 4 59 49](https://github.com/dolphin157/projectCruise/assets/102042928/e5193785-53de-4729-93b4-193e90f76698)
+![스크린샷 2023-10-31 오후 4 57 17](https://github.com/dolphin157/projectCruise/assets/102042928/3c9b343c-13e1-42e8-8bbd-43a84e95f53d)
+
+- 카카오톡 보내기 API
+
+### 메인 페이지
+<img width="608" alt="main2" src="https://github.com/dolphin157/projectCruise/assets/102042928/76e0125b-5929-470a-9d23-1eddea935b6a">
+
+- fullpage 플러그인 활용
+
+### 크루 게시판
+![board](https://github.com/dolphin157/projectCruise/assets/102042928/bafd2108-e2bc-4f00-a5c8-70aa8ea6c633)
+
+- 게시글 목록 조회
+- 게시물 등록, 수정, 삭제
+- 공지 기능
+
+### 크루 소통 게시판
+- 댓글 등록, 수정, 삭제
+- 대댓글 등록, 수정, 삭제
+
 ### 크루 별 상세페이지
 - 크루 소식 조회
 - 크루 일정 조회
@@ -82,25 +115,9 @@
 ### 실시간 알림
 - WebSocket을 이용해 실시간으로 알림 전송
 
-### 회원가입, 로그인
-- 일반 로그인/회원가입
-- 소셜 로그인/회원가입
-- 최근 로그인 표기
-- Spring Security
-
-### 크루 초대하기
-- 카카오톡 보내기 API
-
-### 메인 페이지
-- fullpage 플러그인 활용
 
 ### 크루 만들기
-### 크루 별 소통게시판
-- 게시글 목록 조회
-- 게시물 등록, 수정, 삭제
-- 댓글 등록, 수정, 삭제
-- 대댓글 등록, 수정, 삭제
-- 공지 기능
+
 <br><br>
 
 # 🌟문제점
