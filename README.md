@@ -65,8 +65,8 @@
 
 
 ### 크루 초대하기
-<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/e5193785-53de-4729-93b4-193e90f76698")
-<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/3c9b343c-13e1-42e8-8bbd-43a84e95f53d")
+<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/e5193785-53de-4729-93b4-193e90f76698">
+<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/3c9b343c-13e1-42e8-8bbd-43a84e95f53d">
 
 - 카카오톡 보내기 API
 
@@ -76,7 +76,7 @@
 - fullpage 플러그인 활용
 
 ### 크루 게시판
-<img width="608" src=""https://github.com/dolphin157/projectCruise/assets/102042928/bafd2108-e2bc-4f00-a5c8-70aa8ea6c633">
+<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/bafd2108-e2bc-4f00-a5c8-70aa8ea6c633">
 
 - 게시글 목록 조회
 - 게시물 등록, 수정, 삭제
