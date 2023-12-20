@@ -55,7 +55,7 @@
 
 ### 회원가입, 로그인
 <img width="608" alt="스크린샷 2023-10-31 오전 11 39 03" src="https://github.com/dolphin157/projectCruise/assets/102042928/0e704c58-7cd0-4a9b-a73e-5475aef67f77">
-<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/099a6e03-1e08-49d5-ad27-dc12089fa208")
+<img width="608" src="https://github.com/dolphin157/projectCruise/assets/102042928/099a6e03-1e08-49d5-ad27-dc12089fa208">
 
 
 - 일반 로그인/회원가입
@@ -76,7 +76,7 @@
 - fullpage 플러그인 활용
 
 ### 크루 게시판
-<img width="608" src=""https://github.com/dolphin157/projectCruise/assets/102042928/bafd2108-e2bc-4f00-a5c8-70aa8ea6c633")
+<img width="608" src=""https://github.com/dolphin157/projectCruise/assets/102042928/bafd2108-e2bc-4f00-a5c8-70aa8ea6c633">
 
 - 게시글 목록 조회
 - 게시물 등록, 수정, 삭제
