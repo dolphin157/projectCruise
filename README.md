@@ -71,7 +71,8 @@
 - 카카오톡 보내기 API
 
 ### 메인 페이지
-<img width="608" alt="main2" src="https://github.com/dolphin157/projectCruise/assets/102042928/76e0125b-5929-470a-9d23-1eddea935b6a">
+
+![Nov-27-2023_22-38-03](https://github.com/dolphin157/projectCruise/assets/102042928/7966adc1-95fe-4e35-abb1-5e4b6f828285)
 
 - fullpage 플러그인 활용
 
